@@ -1,0 +1,1538 @@
+<!--
+    eMediX.ro - Pagina Programare Consultație
+    - Header cu logo, temă și buton Înapoi la Cont
+    - 4 pași: alegere medic, dată, oră, detalii & confirmare
+    - Carduri doctori, calendar, sloturi oră, sumar programare
+    - Responsive, mod întunecat, validare, animații
+    - Footer cu copyright
+-->
+
+<!DOCTYPE html>
+<html lang="ro" class="light dark">
+    
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eMediX.ro - Revoluția Digitală în Sănătatea Românească</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=MuseoModerno:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            light: '#0ea5e9',
+                            dark: '#38bdf8'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+
+        .emedix {
+        font-family: "MuseoModerno", sans-serif;
+        font-optical-sizing: auto;
+        font-weight: 500;
+        font-style: normal;
+        }
+
+        /* Stilizăm întregul document */
+        body {
+            font-family: 'Inter', sans-serif; /* Folosim fontul Inter */
+            transition: all 0.5s ease; /* Adăugăm tranziții pentru schimbarea temei */
+            scroll-behavior: smooth; /* Scroll lin la navigare */
+        }
+        
+        .form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            background-color: #f8fafc;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .dark .form-input {
+            background-color: #1e293b;
+            border-color: #334155;
+            color: #f1f5f9;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+            background-color: white;
+        }
+        
+        .dark .form-input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+            background-color: #0f172a;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .dark .form-label {
+            color: #f3f4f6;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+            color: white;
+            padding: 0.875rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4);
+        }
+        
+        .dark .btn-primary {
+            background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+        }
+        
+        .dark .btn-primary:hover {
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: #0ea5e9;
+            padding: 0.875rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid #0ea5e9;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(14, 165, 233, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .dark .btn-secondary {
+            color: #38bdf8;
+            border-color: #38bdf8;
+        }
+        
+        .dark .btn-secondary:hover {
+            background: rgba(56, 189, 248, 0.1);
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+        }
+        
+        .dark .card {
+            background: #1e293b;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+        }
+        
+        .doctor-card {
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .doctor-card:hover {
+            border-color: #0ea5e9;
+            transform: translateY(-2px);
+        }
+        
+        .doctor-card.selected {
+            border-color: #0ea5e9;
+            background: rgba(14, 165, 233, 0.05);
+        }
+        
+        .dark .doctor-card.selected {
+            border-color: #38bdf8;
+            background: rgba(56, 189, 248, 0.05);
+        }
+        
+        .time-slot {
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .dark .time-slot {
+            border-color: #334155;
+            background: #1e293b;
+        }
+        
+        .time-slot:hover {
+            border-color: #0ea5e9;
+            background: rgba(14, 165, 233, 0.1);
+        }
+        
+        .time-slot.selected {
+            border-color: #0ea5e9;
+            background: #0ea5e9;
+            color: white;
+        }
+        
+        .time-slot.unavailable {
+            background: #f3f4f6;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .dark .time-slot.unavailable {
+            background: #374151;
+            color: #6b7280;
+        }
+        
+        .theme-toggle-icon {
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: #e5e7eb;
+            color: #6b7280;
+            font-weight: 600;
+            position: relative;
+        }
+        
+        .step.active {
+            background: #0ea5e9;
+            color: white;
+        }
+        
+        .step.completed {
+            background: #10b981;
+            color: white;
+        }
+        
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background: #e5e7eb;
+            margin: 0 1rem;
+        }
+        
+        .step-line.completed {
+            background: #10b981;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .dark .calendar-day {
+            border-color: #374151;
+        }
+        
+        .calendar-day:hover {
+            border-color: #0ea5e9;
+            background: rgba(14, 165, 233, 0.1);
+        }
+        
+        .calendar-day.selected {
+            background: #0ea5e9;
+            color: white;
+            border-color: #0ea5e9;
+        }
+        
+        .calendar-day.unavailable {
+            background: #f3f4f6;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .dark .calendar-day.unavailable {
+            background: #374151;
+            color: #6b7280;
+        }
+        
+        .calendar-day.other-month {
+            color: #d1d5db;
+        }
+        
+        .dark .calendar-day.other-month {
+            color: #4b5563;
+        }
+    </style>
+
+</head>
+
+
+<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
+
+    
+    <div class="min-h-screen flex flex-col">
+    
+        <!-- Header -->
+    
+        <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
+    
+            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+    
+                <div class="flex items-center">
+    
+                    <div class="flex items-center mr-3">
+
+                        <a href="home.html" class="flex items-center">
+
+                            <div class="emedix font-bold text-2xl transition-all-slow">emedix</div>
+                            <span class="emedix text-primary-light dark:text-primary-dark font-bold text-2xl transition-all-slow">.ro</span>
+                            
+                        </a>
+
+                    </div>
+    
+                </div>
+                
+                <div class="flex items-center space-x-4">
+    
+                    <button id="theme-toggle" class="p-2 rounded-full bg-gray-100 dark:bg-gray-700 transition-all-slow relative">
+
+                        <svg id="sun-icon" class="h-5 w-5 text-yellow-500 theme-toggle-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                        </svg>
+
+                        <svg id="moon-icon" class="h-5 w-5 text-gray-400 theme-toggle-icon opacity-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                        </svg>
+
+                    </button>
+                    
+                    <button class="btn-secondary" onclick="window.location.href='infoaccount.html'">
+    
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+    
+                        Înapoi la Cont
+    
+                    </button>
+    
+                </div>
+    
+            </div>
+    
+        </header>
+
+        <!-- Main Content -->
+
+        <main class="flex-1 py-8 px-4">
+
+            <div class="container max-w-4xl mx-auto">
+
+                <!-- Page Header -->
+
+                <div class="text-center mb-8">
+
+                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Programare Nouă</h1>
+                    <p class="text-gray-600 dark:text-gray-400">Alege medicul și programează-ți consultația în câțiva pași simpli</p>
+
+                </div>
+
+                <!-- Step Indicator -->
+
+                <div class="step-indicator justify-center mb-8">
+
+                    <div class="step hidden active" id="step-1">1</div>
+
+                    <div class="step-line completed" id="line-1"></div>
+
+                    <div class="step hidden" id="step-2">2</div>
+
+                    <div class="step-line" id="line-2"></div>
+
+                    <div class="step hidden" id="step-3">3</div>
+
+                    <div class="step-line" id="line-3"></div>
+
+                    <div class="step hidden" id="step-4">4</div>
+              
+                </div>
+
+                <!-- Step 1: Select Doctor -->
+          
+                <div class="card p-8 mb-8 fade-in" id="step-doctor">
+          
+                    <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">Pasul 1: Alege Medicul</h2>
+                    
+                    <!-- Specialty Filter -->
+          
+                    <div class="form-group">
+          
+                        <label class="form-label">Filtrează după specialitate:</label>
+           
+                        <select class="form-input" id="specialty-filter">
+           
+                            <option value="">Toate specialitățile</option>
+                            <option value="cardiologie">Cardiologie</option>
+                            <option value="dermatologie">Dermatologie</option>
+                            <option value="neurologie">Neurologie</option>
+                            <option value="pediatrie">Pediatrie</option>
+                            <option value="ginecologie">Ginecologie</option>
+            
+                        </select>
+            
+                    </div>
+
+                    <!-- Doctor Selection -->
+            
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="doctors-grid">
+            
+                        <div class="doctor-card card p-6" data-doctor="maria-popescu" data-specialty="cardiologie" style="display: block;">
+            
+                            <div class="flex items-center mb-4">
+            
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%2310b981'/%3E%3Ctext x='50' y='60' text-anchor='middle' fill='white' font-size='30' font-family='Arial'%3EMP%3C/text%3E%3C/svg%3E" alt="Dr. Maria Popescu" class="w-16 h-16 rounded-full">
+            
+                                <div class="ml-4">
+            
+                                    <h3 class="font-semibold text-gray-900 dark:text-white">Dr. Maria Popescu</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Cardiolog</p>
+            
+                                    <div class="flex items-center mt-1">
+            
+                                        <div class="flex text-yellow-400">
+            
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+            
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+            
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+            
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+            
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+            
+                                        </div>
+            
+                                        <span class="text-sm text-gray-600 dark:text-gray-400 ml-1">(4.9)</span>
+            
+                                    </div>
+            
+                                </div>
+            
+                            </div>
+            
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Specialist în boli cardiovasculare cu 15 ani experiență. Expert în hipertensiune și aritmii.</p>
+            
+                            <div class="flex justify-between items-center">
+            
+                                <span class="text-lg font-bold text-primary-light dark:text-primary-dark">250 RON</span>
+                                <span class="text-sm text-green-600 dark:text-green-400">Disponibil astăzi</span>
+            
+                            </div>
+            
+                        </div>
+
+                        <div class="doctor-card card p-6" data-doctor="ion-georgescu" data-specialty="dermatologie" style="display: block;">
+            
+                            <div class="flex items-center mb-4">
+            
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23f59e0b'/%3E%3Ctext x='50' y='60' text-anchor='middle' fill='white' font-size='30' font-family='Arial'%3EIG%3C/text%3E%3C/svg%3E" alt="Dr. Ion Georgescu" class="w-16 h-16 rounded-full">
+            
+                                <div class="ml-4">
+            
+                                    <h3 class="font-semibold text-gray-900 dark:text-white">Dr. Ion Georgescu</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Dermatolog</p>
+            
+                                    <div class="flex items-center mt-1">
+            
+                                        <div class="flex text-yellow-400">
+            
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+            
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+            
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+            
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+            
+                                            <svg class="h-4 w-4 text-gray-300 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+            
+                                        </div>
+                                        <span class="text-sm text-gray-600 dark:text-gray-400 ml-1">(4.7)</span>
+            
+                                    </div>
+            
+                                </div>
+            
+                            </div>
+            
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Expert în afecțiuni dermatologice și estetică medicală. Specializat în tratarea acneei și psoriazisului.</p>
+            
+                            <div class="flex justify-between items-center">
+            
+                                <span class="text-lg font-bold text-primary-light dark:text-primary-dark">200 RON</span>
+                                <span class="text-sm text-green-600 dark:text-green-400">Disponibil mâine</span>
+            
+                            </div>
+            
+                        </div>
+
+            
+                        <div class="doctor-card card p-6" data-doctor="ana-vasilescu" data-specialty="neurologie" style="display: block;">
+            
+                            <div class="flex items-center mb-4">
+            
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23ef4444'/%3E%3Ctext x='50' y='60' text-anchor='middle' fill='white' font-size='30' font-family='Arial'%3EAV%3C/text%3E%3C/svg%3E" alt="Dr. Ana Vasilescu" class="w-16 h-16 rounded-full">
+            
+                                <div class="ml-4">
+            
+                                    <h3 class="font-semibold text-gray-900 dark:text-white">Dr. Ana Vasilescu</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Neurolog</p>
+            
+                                    <div class="flex items-center mt-1">
+            
+                                        <div class="flex text-yellow-400">
+            
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+                                     
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+                                       
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+                                        
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+                                        
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+                                       
+                                        </div>
+                                   
+                                        <span class="text-sm text-gray-600 dark:text-gray-400 ml-1">(5.0)</span>
+                          
+                                    </div>
+                     
+                                </div>
+                     
+                            </div>
+                        
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Specializată în tulburări neurologice și migrene. Expert în tratarea epilepsiei și bolii Parkinson.</p>
+                       
+                            <div class="flex justify-between items-center">
+                       
+                                <span class="text-lg font-bold text-primary-light dark:text-primary-dark">300 RON</span>
+                                <span class="text-sm text-orange-600 dark:text-orange-400">Disponibil în 3 zile</span>
+                       
+                            </div>
+                      
+                        </div>
+
+                        <div class="doctor-card card p-6" data-doctor="elena-marin" data-specialty="pediatrie" style="display: block;">
+                    
+                            <div class="flex items-center mb-4">
+                    
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%236366f1'/%3E%3Ctext x='50' y='60' text-anchor='middle' fill='white' font-size='30' font-family='Arial'%3EEM%3C/text%3E%3C/svg%3E" alt="Dr. Elena Marin" class="w-16 h-16 rounded-full">
+                    
+                                <div class="ml-4">
+                    
+                                    <h3 class="font-semibold text-gray-900 dark:text-white">Dr. Elena Marin</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Pediatru</p>
+                    
+                                    <div class="flex items-center mt-1">
+                    
+                                        <div class="flex text-yellow-400">
+                    
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+                    
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+                    
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+                    
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+                    
+                                            <svg class="h-4 w-4 text-gray-300 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+                    
+                                        </div>
+                    
+                                        <span class="text-sm text-gray-600 dark:text-gray-400 ml-1">(4.8)</span>
+                    
+                                    </div>
+                    
+                                </div>
+                    
+                            </div>
+                    
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Specialist în sănătatea copiilor și adolescenților. Expert în dezvoltarea copilului și vaccinări.</p>
+                    
+                            <div class="flex justify-between items-center">
+                    
+                                <span class="text-lg font-bold text-primary-light dark:text-primary-dark">180 RON</span>
+                                <span class="text-sm text-green-600 dark:text-green-400">Disponibil astăzi</span>
+                    
+                            </div>
+                    
+                        </div>
+
+                    
+                        <div class="doctor-card card p-6" data-doctor="cristina-stan" data-specialty="ginecologie" style="display: block;">
+                    
+                            <div class="flex items-center mb-4">
+                    
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23ec4899'/%3E%3Ctext x='50' y='60' text-anchor='middle' fill='white' font-size='30' font-family='Arial'%3ECS%3C/text%3E%3C/svg%3E" alt="Dr. Cristina Stan" class="w-16 h-16 rounded-full">
+                    
+                                <div class="ml-4">
+                    
+                                    <h3 class="font-semibold text-gray-900 dark:text-white">Dr. Cristina Stan</h3>
+                    
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Ginecolog</p>
+                    
+                                    <div class="flex items-center mt-1">
+                    
+                                        <div class="flex text-yellow-400">
+                    
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+                    
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+                    
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+                    
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+                    
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+                    
+                                        </div>
+                    
+                                        <span class="text-sm text-gray-600 dark:text-gray-400 ml-1">(4.9)</span>
+                    
+                                    </div>
+                    
+                                </div>
+                    
+                            </div>
+                    
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Specialist în sănătatea femeii și planificare familială. Expert în ginecologie și obstetrică.</p>
+                    
+                            <div class="flex justify-between items-center">
+                    
+                                <span class="text-lg font-bold text-primary-light dark:text-primary-dark">220 RON</span>
+                                <span class="text-sm text-green-600 dark:text-green-400">Disponibil mâine</span>
+                    
+                            </div>
+                    
+                        </div>
+
+                        <div class="doctor-card card p-6 selected" data-doctor="radu-ionescu" data-specialty="cardiologie" style="display: block;">
+                    
+                            <div class="flex items-center mb-4">
+                    
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%2306b6d4'/%3E%3Ctext x='50' y='60' text-anchor='middle' fill='white' font-size='30' font-family='Arial'%3ERI%3C/text%3E%3C/svg%3E" alt="Dr. Radu Ionescu" class="w-16 h-16 rounded-full">
+                    
+                                <div class="ml-4">
+                    
+                                    <h3 class="font-semibold text-gray-900 dark:text-white">Dr. Radu Ionescu</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Cardiolog</p>
+                    
+                                    <div class="flex items-center mt-1">
+                    
+                                        <div class="flex text-yellow-400">
+                    
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+                    
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+                    
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+                    
+                                            <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+                    
+                                            <svg class="h-4 w-4 text-gray-300 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"></path>
+                                            </svg>
+                    
+                                        </div>
+                    
+                                        <span class="text-sm text-gray-600 dark:text-gray-400 ml-1">(4.6)</span>
+                    
+                                    </div>
+                    
+                                </div>
+                    
+                            </div>
+                    
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Cardiolog interventional cu experiență în cateterizări cardiace și angioplastii coronariene.</p>
+                    
+                            <div class="flex justify-between items-center">
+                    
+                                <span class="text-lg font-bold text-primary-light dark:text-primary-dark">210 RON</span>
+                                <span class="text-sm text-orange-600 dark:text-orange-400">Disponibil în 2 zile</span>
+                    
+                            </div>
+                    
+                        </div>
+                    
+                    </div>
+
+                    
+                    <div class="flex justify-end mt-8">
+                    
+                        <button class="btn-primary" id="next-to-date">
+                    
+                            Continuă
+                    
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                    
+                        </button>
+                    
+                    </div>
+       
+                </div>
+
+                <!-- Step 2: Select Date -->
+       
+                <div class="card p-8 mb-8 hidden" id="step-date">
+       
+                    <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">Pasul 2: Alege Data</h2>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+       
+                        <div>
+       
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Calendar</h3>
+       
+                            <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+       
+                                <div class="flex justify-between items-center mb-4">
+       
+                                    <button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded" id="prev-month">
+       
+                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                        </svg>
+       
+                                    </button>
+       
+                                    <h4 class="text-lg font-semibold" id="current-month"></h4>
+       
+                                    <button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded" id="next-month">
+       
+                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                        </svg>
+       
+                                    </button>
+       
+                                </div>
+                                
+                                <div class="grid grid-cols-7 gap-1 mb-2">
+                             
+                                    <div class="text-center text-sm font-medium text-gray-600 dark:text-gray-400 py-2">L</div>
+                                    <div class="text-center text-sm font-medium text-gray-600 dark:text-gray-400 py-2">M</div>
+                                    <div class="text-center text-sm font-medium text-gray-600 dark:text-gray-400 py-2">M</div>
+                                    <div class="text-center text-sm font-medium text-gray-600 dark:text-gray-400 py-2">J</div>
+                                    <div class="text-center text-sm font-medium text-gray-600 dark:text-gray-400 py-2">V</div>
+                                    <div class="text-center text-sm font-medium text-gray-600 dark:text-gray-400 py-2">S</div>
+                                    <div class="text-center text-sm font-medium text-gray-600 dark:text-gray-400 py-2">D</div>
+                             
+                                </div>
+                                
+                                <div class="calendar-grid" id="calendar-days">
+
+                                    <div class="calendar-day other-month"></div>
+                                    <div class="calendar-day other-month"></div>
+                                    <div class="calendar-day other-month"></div>
+                                    <div class="calendar-day other-month"></div>
+                                    <div class="calendar-day">1</div>
+                                    <div class="calendar-day">2</div>
+                                    <div class="calendar-day">3</div>
+                                    <div class="calendar-day">4</div>
+                                    <div class="calendar-day">5</div>
+                                    <div class="calendar-day">6</div>
+                                    <div class="calendar-day">7</div>
+                                    <div class="calendar-day unavailable">8</div>
+                                    <div class="calendar-day">9</div>
+                                    <div class="calendar-day">10</div>
+                                    <div class="calendar-day">11</div>
+                                    <div class="calendar-day unavailable">12</div>
+                                    <div class="calendar-day">13</div>
+                                    <div class="calendar-day">14</div>
+                                    <div class="calendar-day">15</div>
+                                    <div class="calendar-day unavailable">16</div>
+                                    <div class="calendar-day">17</div>
+                                    <div class="calendar-day">18</div>
+                                    <div class="calendar-day">19</div>
+                                    <div class="calendar-day">20</div>
+                                    <div class="calendar-day">21</div>
+                                    <div class="calendar-day unavailable">22</div>
+                                    <div class="calendar-day unavailable">23</div>
+                                    <div class="calendar-day">24</div>
+                                    <div class="calendar-day">25</div>
+                                    <div class="calendar-day unavailable">26</div>
+                                    <div class="calendar-day">27</div>
+                                    <div class="calendar-day">28</div>
+                                    <div class="calendar-day unavailable">29</div>
+                                    <div class="calendar-day">30</div>
+                                    <div class="calendar-day">31</div>
+
+                                </div>
+                      
+                            </div>
+                      
+                        </div>
+                        
+                        <div>
+                      
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Informații Disponibilitate</h3>
+                      
+                            <div class="space-y-4">
+                      
+                                <div class="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                      
+                                    <div class="flex items-center">
+                      
+                                        <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                                        <span class="text-sm font-medium text-green-800 dark:text-green-200">Disponibil</span>
+                      
+                                    </div>
+                      
+                                    <p class="text-sm text-green-700 dark:text-green-300 mt-1">Medicul are timp liber în această zi</p>
+                      
+                                </div>
+                                
+                                <div class="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
+                      
+                                    <div class="flex items-center">
+                      
+                                        <div class="w-3 h-3 bg-orange-500 rounded-full mr-2"></div>
+                                        <span class="text-sm font-medium text-orange-800 dark:text-orange-200">Parțial ocupat</span>
+                      
+                                    </div>
+                      
+                                    <p class="text-sm text-orange-700 dark:text-orange-300 mt-1">Câteva ore disponibile</p>
+                      
+                                </div>
+                                
+                                <div class="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+                      
+                                    <div class="flex items-center">
+                      
+                                        <div class="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
+                                        <span class="text-sm font-medium text-red-800 dark:text-red-200">Indisponibil</span>
+                      
+                                    </div>
+                      
+                                    <p class="text-sm text-red-700 dark:text-red-300 mt-1">Nu sunt ore libere în această zi</p>
+                      
+                                </div>
+                      
+                            </div>
+                      
+                        </div>
+                    
+                    </div>
+
+                    <div class="flex justify-between mt-8">
+                    
+                        <button class="btn-secondary" id="back-to-doctor">
+                    
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                    
+                            Înapoi
+                    
+                        </button>
+                    
+                        <button class="btn-primary" id="next-to-time">
+                    
+                            Continuă
+                    
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                    
+                        </button>
+                    
+                    </div>
+                
+                </div>
+
+                <!-- Step 3: Select Time -->
+                
+                <div class="card p-8 mb-8 hidden" id="step-time">
+                
+                    <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">Pasul 3: Alege Ora</h2>
+                    
+                    <div class="mb-6">
+                
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Ore disponibile pentru <span id="selected-date-display">29.10.2025</span></h3>
+                
+                        <p class="text-gray-600 dark:text-gray-400">Selectează ora dorită pentru consultația cu <span id="selected-doctor-display">Dr. Radu Ionescu</span></p>
+                
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3" id="time-slots"><div class="time-slot">08:00</div><div class="time-slot">08:30</div><div class="time-slot unavailable">09:00</div><div class="time-slot">09:30</div><div class="time-slot">10:00</div><div class="time-slot">10:30</div><div class="time-slot unavailable">11:00</div><div class="time-slot">11:30</div><div class="time-slot">12:00</div><div class="time-slot">12:30</div><div class="time-slot unavailable">14:00</div><div class="time-slot unavailable">14:30</div><div class="time-slot">15:00</div><div class="time-slot unavailable">15:30</div><div class="time-slot unavailable">16:00</div><div class="time-slot">16:30</div><div class="time-slot">17:00</div><div class="time-slot unavailable">17:30</div></div>
+
+                    <div class="flex justify-between mt-8">
+                
+                        <button class="btn-secondary" id="back-to-date">
+                
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                
+                            Înapoi
+                
+                        </button>
+                
+                        <button class="btn-primary" id="next-to-details">
+                
+                            Continuă
+                
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                
+                        </button>
+                
+                    </div>
+                
+                </div>
+
+                <!-- Step 4: Details & Confirmation -->
+                
+                <div class="card p-8 mb-8 hidden" id="step-details">
+                
+                    <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">Pasul 4: Detalii și Confirmare</h2>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                        <div>
+                
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Detalii Consultație</h3>
+                            
+                            <div class="form-group">
+                
+                                <label class="form-label">Motivul consultației *</label>
+                
+                                <select class="form-input" id="consultation-reason" required="">
+                
+                                    <option value="">Selectează motivul</option>
+                                    <option value="control-periodic">Control periodic</option>
+                                    <option value="simptome-noi">Simptome noi</option>
+                                    <option value="urmarire-tratament">Urmărire tratament</option>
+                                    <option value="a-doua-opinie">A doua opinie</option>
+                                    <option value="urgenta">Urgență</option>
+                                    <option value="altele">Altele</option>
+                
+                                </select>
+                
+                            </div>
+
+                            <div class="form-group">
+                
+                                <label class="form-label">Descrierea problemei</label>
+                                <textarea class="form-input" id="problem-description" rows="4" placeholder="Descrie pe scurt simptomele sau motivul pentru care dorești consultația..."></textarea>
+                
+                            </div>
+
+                            <div class="form-group">
+                
+                                <label class="form-label">Tipul consultației *</label>
+                
+                                <div class="space-y-2">
+                
+                                    <label class="flex items-center">
+                
+                                        <input type="radio" name="consultation-type" value="online" class="mr-2" checked="">
+                                        <span>Consultație online (video call)</span>
+                
+                                    </label>
+                
+                                    <label class="flex items-center">
+                
+                                        <input type="radio" name="consultation-type" value="cabinet" class="mr-2">
+                                        <span>Consultație la cabinet</span>
+                
+                                    </label>
+                
+                                </div>
+                
+                            </div>
+
+                            <div class="form-group">
+                
+                                <label class="form-label">Telefon de contact *</label>
+                                <input type="tel" class="form-input" id="contact-phone" placeholder="+40 7XX XXX XXX" required="">
+                
+                            </div>
+                
+                        </div>
+                        
+                        <div>
+                
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Rezumatul Programării</h3>
+                            
+                            <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 space-y-4">
+                
+                                <div class="flex items-center">
+                                
+                                    <div class="ml-4">
+                
+                                        <h4 class="font-semibold text-gray-900 dark:text-white" id="summary-doctor-name"></h4>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400" id="summary-doctor-specialty"></p>
+                
+                                    </div>
+                
+                                </div>
+                                
+                                <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                
+                                    <div class="space-y-2">
+                
+                                        <div class="flex justify-between">
+                
+                                            <span class="text-gray-600 dark:text-gray-400">Data:</span>
+                                            <span class="font-medium" id="summary-date"></span>
+                
+                                        </div>
+                
+                                        <div class="flex justify-between">
+                
+                                            <span class="text-gray-600 dark:text-gray-400">Ora:</span>
+                                            <span class="font-medium" id="summary-time"></span>
+                
+                                        </div>
+                
+                                        <div class="flex justify-between">
+                
+                                            <span class="text-gray-600 dark:text-gray-400">Durată:</span>
+                                            <span class="font-medium">30 minute</span>
+                
+                                        </div>
+                
+                                        <div class="flex justify-between">
+                
+                                            <span class="text-gray-600 dark:text-gray-400">Tip:</span>
+                                            <span class="font-medium" id="summary-type"></span>
+                
+                                        </div>
+                
+                                    </div>
+                
+                                </div>
+                                
+                                <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                
+                                    <div class="flex justify-between items-center">
+                
+                                        <span class="text-lg font-semibold text-gray-900 dark:text-white">Total:</span>
+                                        <span class="text-2xl font-bold text-primary-light dark:text-primary-dark" id="summary-price"></span>
+                
+                                    </div>
+                
+                                </div>
+                
+                            </div>
+
+                            <div class="mt-6">
+                
+                                <label class="flex items-start">
+                
+                                    <input type="checkbox" id="terms-agreement" class="mt-1 mr-2" required="">
+                                    <span class="text-sm text-gray-600 dark:text-gray-400">
+                                        Sunt de acord cu <a href="#" class="text-primary-light dark:text-primary-dark hover:underline">Termenii și Condițiile</a> 
+                                        și <a href="#" class="text-primary-light dark:text-primary-dark hover:underline">Politica de Confidențialitate</a>
+                                    </span>
+                
+                                </label>
+                
+                            </div>
+                
+                        </div>
+                
+                    </div>
+
+                    <div class="flex justify-between mt-8">
+                
+                        <button class="btn-secondary" id="back-to-time">
+                
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                
+                            Înapoi
+                
+                        </button>
+                
+                        <button class="btn-primary" id="confirm-appointment" onclick="window.location.href='infoaccount.html'">
+                
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                
+                            Confirmă Programarea
+                
+                        </button>
+                
+                    </div>
+                
+                </div>
+     
+            </div>
+     
+        </main>
+
+        <!-- Footer -->
+     
+        <footer class="bg-white dark:bg-gray-800 py-4 border-t border-gray-200 dark:border-gray-700">
+     
+            <div class="container mx-auto px-4 text-center">
+     
+                <p class="text-gray-600 dark:text-gray-300">© 2025 eMediX.ro. Toate drepturile rezervate.</p>
+     
+            </div>
+     
+        </footer>
+   
+    </div>
+
+
+    <script>
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        const htmlElement = document.documentElement;
+
+        if (localStorage.getItem('theme') === 'dark') {
+            htmlElement.classList.add('dark');
+            sunIcon.style.opacity = 0;
+            moonIcon.style.opacity = 1;
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+
+            if (htmlElement.classList.contains('dark')) {
+                sunIcon.style.opacity = 0;
+                moonIcon.style.opacity = 1;
+                localStorage.setItem('theme', 'dark');
+            } else {
+                sunIcon.style.opacity = 1;
+                moonIcon.style.opacity = 0;
+                localStorage.setItem('theme', 'light');
+            }
+        });
+    </script>
+
+
+    <script>
+        // Appointment booking functionality
+        let selectedDoctor = null;
+        let selectedDate = null;
+        let selectedTime = null;
+        let currentStep = 1;
+
+        const doctors = {
+            'maria-popescu': {
+                name: 'Dr. Maria Popescu',
+                specialty: 'Cardiolog',
+                price: 250,
+                avatar: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%2310b981'/%3E%3Ctext x='50' y='60' text-anchor='middle' fill='white' font-size='30' font-family='Arial'%3EMP%3C/text%3E%3C/svg%3E"
+            },
+            'ion-georgescu': {
+                name: 'Dr. Ion Georgescu',
+                specialty: 'Dermatolog',
+                price: 200,
+                avatar: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23f59e0b'/%3E%3Ctext x='50' y='60' text-anchor='middle' fill='white' font-size='30' font-family='Arial'%3EIG%3C/text%3E%3C/svg%3E"
+            },
+            'ana-vasilescu': {
+                name: 'Dr. Ana Vasilescu',
+                specialty: 'Neurolog',
+                price: 300,
+                avatar: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23ef4444'/%3E%3Ctext x='50' y='60' text-anchor='middle' fill='white' font-size='30' font-family='Arial'%3EAV%3C/text%3E%3C/svg%3E"
+            },
+            'elena-marin': {
+                name: 'Dr. Elena Marin',
+                specialty: 'Pediatru',
+                price: 180,
+                avatar: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%236366f1'/%3E%3Ctext x='50' y='60' text-anchor='middle' fill='white' font-size='30' font-family='Arial'%3EEM%3C/text%3E%3C/svg%3E"
+            },
+            'cristina-stan': {
+                name: 'Dr. Cristina Stan',
+                specialty: 'Ginecolog',
+                price: 220,
+                avatar: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23ec4899'/%3E%3Ctext x='50' y='60' text-anchor='middle' fill='white' font-size='30' font-family='Arial'%3ECS%3C/text%3E%3C/svg%3E"
+            },
+            'radu-ionescu': {
+                name: 'Dr. Radu Ionescu',
+                specialty: 'Cardiolog',
+                price: 210,
+                avatar: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%2306b6d4'/%3E%3Ctext x='50' y='60' text-anchor='middle' fill='white' font-size='30' font-family='Arial'%3ERI%3C/text%3E%3C/svg%3E"
+            }
+        };
+
+        // Step navigation
+        function updateStepIndicator(step) {
+            for (let i = 1; i <= 4; i++) {
+                const stepEl = document.getElementById(`step-${i}`);
+                const lineEl = document.getElementById(`line-${i}`);
+                if (i < step) {
+                    stepEl.classList.remove('active');
+                    stepEl.classList.add('completed');
+                    if (lineEl) lineEl.classList.add('completed');
+                } else if (i === step) {
+                    stepEl.classList.remove('completed');
+                    stepEl.classList.add('active');
+                } else {
+                    stepEl.classList.remove('active', 'completed');
+                    if (lineEl) lineEl.classList.remove('completed');
+                }
+            }
+        }
+
+        function showStep(step) {
+            document.querySelectorAll('[id^="step-"]').forEach(el => {
+                if (el.id.includes('step-') && !el.id.includes('indicator')) {
+                    el.classList.add('hidden');
+                }
+            });
+            const stepMap = {
+                1: 'step-doctor',
+                2: 'step-date',
+                3: 'step-time',
+                4: 'step-details'
+            };
+            document.getElementById(stepMap[step]).classList.remove('hidden');
+            updateStepIndicator(step);
+            currentStep = step;
+        }
+
+        // Doctor selection
+        document.querySelectorAll('.doctor-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.doctor-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedDoctor = this.getAttribute('data-doctor');
+                document.getElementById('next-to-date').disabled = false;
+                updateSummary();
+            });
+        });
+
+        // Specialty filter
+        document.getElementById('specialty-filter').addEventListener('change', function() {
+            const selectedSpecialty = this.value;
+            document.querySelectorAll('.doctor-card').forEach(card => {
+                const cardSpecialty = card.getAttribute('data-specialty');
+                if (!selectedSpecialty || cardSpecialty === selectedSpecialty) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Calendar functionality
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+
+        function generateCalendar(month, year) {
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = new Date();
+            const monthNames = [
+                'Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie',
+                'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie'
+            ];
+            document.getElementById('current-month').textContent = `${monthNames[month]} ${year}`;
+            const calendarDays = document.getElementById('calendar-days');
+            calendarDays.innerHTML = '';
+            const startDay = firstDay === 0 ? 6 : firstDay - 1;
+            for (let i = 0; i < startDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day other-month';
+                calendarDays.appendChild(emptyDay);
+            }
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayEl = document.createElement('div');
+                dayEl.className = 'calendar-day';
+                dayEl.textContent = day;
+                const currentDate = new Date(year, month, day);
+                if (currentDate < new Date(today.getFullYear(), today.getMonth(), today.getDate())) {
+                    dayEl.classList.add('unavailable');
+                } else {
+                    if (Math.random() > 0.8) {
+                        dayEl.classList.add('unavailable');
+                    } else {
+                        dayEl.addEventListener('click', function() {
+                            document.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('selected'));
+                            this.classList.add('selected');
+                            selectedDate = new Date(year, month, day);
+                            document.getElementById('next-to-time').disabled = false;
+                            updateSummary();
+                        });
+                    }
+                }
+                calendarDays.appendChild(dayEl);
+            }
+        }
+
+        document.getElementById('prev-month').addEventListener('click', function() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            generateCalendar(currentMonth, currentYear);
+        });
+
+        document.getElementById('next-month').addEventListener('click', function() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            generateCalendar(currentMonth, currentYear);
+        });
+
+        // Time slots generation
+        function generateTimeSlots() {
+            const timeSlots = document.getElementById('time-slots');
+            timeSlots.innerHTML = '';
+            const slots = [
+                '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
+                '11:00', '11:30', '12:00', '12:30', '14:00', '14:30',
+                '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'
+            ];
+            slots.forEach(time => {
+                const slot = document.createElement('div');
+                slot.className = 'time-slot';
+                slot.textContent = time;
+                if (Math.random() > 0.7) {
+                    slot.classList.add('unavailable');
+                } else {
+                    slot.addEventListener('click', function() {
+                        document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+                        this.classList.add('selected');
+                        selectedTime = time;
+                        document.getElementById('next-to-details').disabled = false;
+                        updateSummary();
+                    });
+                }
+                timeSlots.appendChild(slot);
+            });
+        }
+
+        // Update summary
+        function updateSummary() {
+            if (selectedDoctor) {
+                const doctor = doctors[selectedDoctor];
+                document.getElementById('summary-doctor-name').textContent = doctor.name;
+                document.getElementById('summary-doctor-specialty').textContent = doctor.specialty;
+                document.getElementById('summary-price').textContent = `${doctor.price} RON`;
+                document.getElementById('selected-doctor-display').textContent = doctor.name;
+            }
+            if (selectedDate) {
+                const dateStr = selectedDate.toLocaleDateString('ro-RO');
+                document.getElementById('summary-date').textContent = dateStr;
+                document.getElementById('selected-date-display').textContent = dateStr;
+            }
+            if (selectedTime) {
+                document.getElementById('summary-time').textContent = selectedTime;
+            }
+            // Consultation type
+            const typeRadio = document.querySelector('input[name="consultation-type"]:checked');
+            if (typeRadio) {
+                document.getElementById('summary-type').textContent = typeRadio.value === 'online' ? 'Online' : 'La cabinet';
+            }
+        }
+
+        // Navigation buttons
+        document.getElementById('next-to-date').addEventListener('click', function() {
+            showStep(2);
+            generateCalendar(currentMonth, currentYear);
+            document.getElementById('next-to-time').disabled = true;
+        });
+        document.getElementById('back-to-doctor').addEventListener('click', function() {
+            showStep(1);
+        });
+        document.getElementById('next-to-time').addEventListener('click', function() {
+            showStep(3);
+            generateTimeSlots();
+            document.getElementById('next-to-details').disabled = true;
+            updateSummary();
+        });
+        document.getElementById('back-to-date').addEventListener('click', function() {
+            showStep(2);
+        });
+        document.getElementById('next-to-details').addEventListener('click', function() {
+            showStep(4);
+            updateSummary();
+        });
+        document.getElementById('back-to-time').addEventListener('click', function() {
+            showStep(3);
+        });
+
+        // Consultation type change
+        document.querySelectorAll('input[name="consultation-type"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                updateSummary();
+            });
+        });
+
+        // Final confirmation
+        document.getElementById('confirm-appointment').addEventListener('click', function() {
+            const reason = document.getElementById('consultation-reason').value;
+            const phone = document.getElementById('contact-phone').value;
+            const terms = document.getElementById('terms-agreement').checked;
+            if (!reason || !phone || !terms) {
+                alert('Te rugăm să completezi toate câmpurile obligatorii și să accepți termenii și condițiile.');
+                return;
+            }
+            alert('Programarea a fost confirmată cu succes! Vei primi un email de confirmare în scurt timp.');
+            window.location.href = 'infoaccount.html';
+        });
+
+        // Initialize
+        generateCalendar(currentMonth, currentYear);
+        updateSummary();
+    </script>
+
+</body>
+
+</html>
