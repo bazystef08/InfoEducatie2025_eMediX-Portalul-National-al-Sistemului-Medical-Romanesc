@@ -73,3 +73,7 @@ Perspective de dezvoltare:
 - Integrarea cu organizații non-guvernamentale, farmacii și laboratoare pentru servicii suplimentare
 
 eMediX nu este doar un pas spre digitalizarea sănătății, ci o soluție reală pentru debirocratizare, eficiență și accesibilitate în sistemul medical românesc.
+
+<img width="1920" height="1032" alt="1" src="https://github.com/user-attachments/assets/e2fd1fd3-ca99-4537-a161-f0cde3a834b3" />
+<img width="1920" height="1032" alt="2" src="https://github.com/user-attachments/assets/95c21a07-7821-4578-a8d6-0e3a2447b477" />
+<img width="1920" height="1032" alt="3" src="https://github.com/user-attachments/assets/64d46d48-97f4-4a22-9d49-5488860c7d0c" />
